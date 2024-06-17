@@ -3,12 +3,47 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="member"> <!-- mapper 파일간에 고유해야함 -->
-	
+
 	<select id='login' resultType='member'>
 		SELECT *
 		FROM MEMBER
+		WHERE USER_ID =
+		#{userId}
+		AND STATUS = 'Y'
+	</select>
+
+	<insert id="insertMember">
+		INSERT INTO MEMBER VALUES(
+		SEQ_UNO.NEXTVAL ,
+		#{userId} ,
+		#{userPwd} ,
+		#{userName} ,
+		#{email} ,
+		#{birthday} ,
+		#{gender} ,
+		#{phone} ,
+		#{address} ,
+		DEFAULT ,
+		DEFAULT ,
+		DEFAULT ,
+		DEFAULT
+		)
+	</insert>
+
+	<update id="updateMember">
+		UPDATE MEMBER
+		SET EMAIL = #{email},
+		    BIRTHDAY = #{birthday},
+		    GENDER = #{gender},
+		    PHONE = #{phone},
+		    USER_NAME = #{userName},
+		    MODIFY_DATE = SYSDATE
+		WHERE USER_ID = #{userId}AND STATUS = 'Y'
+	</update>
+	
+	<select id="idCheck" resultType='int'>
+		SELECT COUNT(*)
+		FROM MEMBER
 		WHERE USER_ID = #{userId}
-			AND USER_PWD = #{userPwd}
-			AND STATUS = 'Y'
 	</select>
 </mapper>

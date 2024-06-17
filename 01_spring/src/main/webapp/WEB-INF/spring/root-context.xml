@@ -18,11 +18,21 @@
 	 	dataSource.driverClassName("oracle.jdbc.driver.OracleDriver");
 	 	property : set 함수 호출?
 	 -->
-	<bean class="org.apache.commons.dbcp.BasicDataSource" id="dataSource" destroy-method="close">
+	<bean class="org.apache.commons.dbcp.BasicDataSource" id="realDataSource" destroy-method="close">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
 		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
 		<property name="username" value="C##SPRING"/>
 		<property name="password" value="SPRING"/>
+	</bean>
+	
+	<bean id = "dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg ref="realDataSource"></constructor-arg>
+		<property name="logFormatter">
+			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+				<property name="loggingType" value="MULTI_LINE"/>
+				<property name="sqlPrefix" value='[SQL]'/>
+			</bean>
+		</property>
 	</bean>
 	
 	<!--

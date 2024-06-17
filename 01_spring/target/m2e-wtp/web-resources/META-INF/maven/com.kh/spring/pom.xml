@@ -102,11 +102,14 @@
 			<version>1</version>
 		</dependency>
 				
-		<!-- Servlet -->
+		<!-- 
+			Servlet
+			4.0.1 으로 변경
+		-->
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -174,6 +177,13 @@
 		    <version>1.4</version>
 		</dependency>
 		
+		<!-- 6) sql문 콘솔출력용 의존성(반드시 로컬 환경 에서만 사용) -->
+		<dependency>
+            <groupId>org.lazyluke</groupId>
+            <artifactId>log4jdbc-remix</artifactId>
+            <version>0.2.7</version>
+        </dependency>
+		
 		<!-- DB관련 라이브러리 추가 끝 -->
 		
 		<!-- 롬북 라이브러리 -->
@@ -207,6 +217,41 @@
 		    <artifactId>spring-security-config</artifactId>
 		    <version>5.7.5</version>
 		</dependency>
+		<!-- 스프링 시큐리티 끝 -->
+		
+		<!--
+			@ResponseBody 사용을 위한 의존성으로 반환형의 자바객체를 (hashmap , vo)
+			json 으로 자동 변환 (convert) 시켜주는 의존성 추가
+			
+			jackson-databind 
+		 -->
+		 
+		 <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.5</version>
+        </dependency>
+        
+        <!-- 
+       		jsonView를 사용하기 위한 의존성
+       		json-lib-ext-spring
+        -->
+        
+        <!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib-ext-spring -->
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib-ext-spring</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		
+		<!-- 자동 load 의존성 -->
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>springloaded</artifactId>
+            <version>1.2.8.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
 		   
 	</dependencies>
 	

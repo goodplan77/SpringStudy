@@ -155,7 +155,7 @@ div {
 		<script>
 			alertify.alert("서비스 요청 성공", '${alertMsg}');
 		</script>
-		<c:remove var="alertMsg" />
+		<%-- <c:remove var="alertMsg" /> 컨트롤러에서 이미 설정--%>
 	</c:if>
 	<div id="header">
 		<div id="header_1">
@@ -169,14 +169,14 @@ div {
 				<c:choose>
 					<c:when test="${empty loginUser}">
 						<!-- 로그인전이라면 -->
-						<a href="${contextPath }/insert.me">회원가입</a>
+						<a href="${contextPath }/member/insert">회원가입</a>
 						<!-- 모달창 설정 : data-target에 정의해놓은 아이디의 dom요소를 띄워줌 -->
 						<a data-toggle="modal" data-target="#loginModal">로그인</a>
 					</c:when>
 					<c:otherwise>
 						<label>${loginUser.userName}님 환영합니다.</label> &nbsp;&nbsp;
-                  <a href="${contextPath }/myPage.me">마이페이지</a>
-						<a href="${contextPath }/logout.me">로그아웃</a>
+                  <a href="${contextPath }/member/myPage">마이페이지</a>
+						<a href="${contextPath }/member/logout">로그아웃</a>
 					</c:otherwise>
 				</c:choose>
 			</div>
