@@ -207,6 +207,7 @@ public class MemberController {
 	
 	@GetMapping("/myPage")
 	public String myPage () {
+		
 		return "member/myPage";
 	}
 	
@@ -225,7 +226,7 @@ public class MemberController {
 			// 업데이트 성공
 			// DB에 저장된 수정된 회원정보를 다시 불러와서 저장 -> login 메서드 재호출
 			Member loginUser = mService.login(m);
-			session.setAttribute("loginUser", loginUser);
+			model.addAttribute("loginUser", loginUser);
 			ra.addFlashAttribute("alertMsg" , "내정보수정 성공");
 			url = "redirect:/member/myPage";
 		} else {
