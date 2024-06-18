@@ -71,14 +71,17 @@ public class BoardController {
 		PageInfo pi = Pagination.getpageInfo(listCount, currentPage, pageLimit, boardLimit);
 			
 		List<Board> list = null;
-		//System.out.println(paramMap.isEmpty());
-		if(paramMap.isEmpty()) {
+		if(paramMap.isEmpty() && !paramMap.containsKey("currentPage")) {
 			list = boardService.selectList(pi);
 			model.addAttribute("list", list);
 			model.addAttribute("pi",pi);
 			return "board/boardListView";
 		} else {
+			listCount = boardService.searchListCount(paramMap);
 			list = boardService.searchList(pi,paramMap);
+			
+			pi = Pagination.getpageInfo(listCount, currentPage, pageLimit, boardLimit);
+			
 			model.addAttribute("list", list);
 			model.addAttribute("pi",pi);
 				

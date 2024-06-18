@@ -72,6 +72,13 @@ public class BoardDaoImpl implements BoardDao{
 		return sqlSession.selectList("board.searchList" , paramMap , rowBounds);
 	}
 
+	@Override
+	public int searchListCount(Map<String, Object> paramMap) {
+		return sqlSession.selectOne("board.searchListCount" , paramMap);
+	}
+
+	
+
 	
 
 }

@@ -17,4 +17,6 @@ public interface BoardDao {
 
 	List<Board> searchList(PageInfo pi, Map<String, Object> paramMap);
 
+	int searchListCount(Map<String, Object> paramMap);
+
 }

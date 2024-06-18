@@ -32,6 +32,10 @@ public class BoardServiceImpl implements BoardService{
 		return boardDao.searchList(pi , paramMap);
 	}
 
-	
+	@Override
+	public int searchListCount(Map<String, Object> paramMap) {
+		return boardDao.searchListCount(paramMap);
+	}
+
 
 }
