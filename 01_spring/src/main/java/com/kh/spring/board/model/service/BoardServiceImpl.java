@@ -1,6 +1,7 @@
 package com.kh.spring.board.model.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,11 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public int selectListCount() {
 		return boardDao.selectListCount();
+	}
+
+	@Override
+	public List<Board> searchList(PageInfo pi, Map<String, Object> paramMap) {
+		return boardDao.searchList(pi , paramMap);
 	}
 
 	

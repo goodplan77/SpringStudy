@@ -49,6 +49,35 @@
 	ORDER BY BOARD_NO ASC           
    </select>
    
+   <select id="searchList" resultType="board">
+	SELECT
+		BOARD_NO,
+		BOARD_TITLE,
+		USER_NAME AS BOARD_WRITER,
+		COUNT,
+		CREATE_DATE
+	FROM BOARD B
+	LEFT JOIN MEMBER M ON BOARD_WRITER = USER_NO
+	WHERE B.STATUS = 'Y'
+	<choose>
+		<when test="condition eq 'writer'">
+			AND USER_NAME LIKE '%' || #{keyword} || '%'
+		</when>
+		<when test="condition eq 'title'">
+			AND BOARD_TITLE LIKE '%' || #{keyword} || '%'
+		</when>
+		<when test="condition eq 'content'">
+			AND BOARD_CONTENT LIKE '%' || #{keyword} || '%'
+		</when>
+		<when test="condition eq 'titleAndContent'">
+			AND (BOARD_WRITER = #{keyword} OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')
+		</when>
+		<otherwise>
+		</otherwise>
+	</choose>
+	ORDER BY BOARD_NO ASC           
+   </select>
+   
    <select id="selectListCount" resultType="int">
    		SELECT 
    			COUNT(*)

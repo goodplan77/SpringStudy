@@ -63,6 +63,15 @@ public class BoardDaoImpl implements BoardDao{
 		return sqlSession.selectOne("board.selectListCount");
 	}
 
+	@Override
+	public List<Board> searchList(PageInfo pi, Map<String, Object> paramMap) {
+		int offset = (pi.getCurrentPage() - 1) * pi.getPageLimit();
+		int limit = pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset , limit);
+		
+		return sqlSession.selectList("board.searchList" , paramMap , rowBounds);
+	}
+
 	
 
 }

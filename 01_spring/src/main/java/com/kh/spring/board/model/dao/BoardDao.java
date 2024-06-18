@@ -1,6 +1,7 @@
 package com.kh.spring.board.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.kh.spring.board.model.vo.Board;
 import com.kh.spring.board.model.vo.BoardType;
@@ -13,5 +14,7 @@ public interface BoardDao {
 	List<Board> selectList(PageInfo pi);
 
 	int selectListCount();
+
+	List<Board> searchList(PageInfo pi, Map<String, Object> paramMap);
 
 }

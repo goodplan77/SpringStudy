@@ -69,16 +69,30 @@ public class BoardController {
 		log.info("paramMap?? {}" , paramMap);
 		
 		PageInfo pi = Pagination.getpageInfo(listCount, currentPage, pageLimit, boardLimit);
+			
+		List<Board> list = null;
+		//System.out.println(paramMap.isEmpty());
+		if(paramMap.isEmpty()) {
+			list = boardService.selectList(pi);
+			model.addAttribute("list", list);
+			model.addAttribute("pi",pi);
+			return "board/boardListView";
+		} else {
+			list = boardService.searchList(pi,paramMap);
+			model.addAttribute("list", list);
+			model.addAttribute("pi",pi);
 				
+			return "board/boardListView";		
+		}
 		// 게시글 데이터 조회
-		List<Board> list = boardService.selectList(pi);
+		// List<Board> list = boardService.selectList(pi);
 		
 		// 응답 View 페이지에 게시글 데이터 삽입
-		model.addAttribute("list",list);
-		model.addAttribute("pi",pi);
+		// model.addAttribute("list", list);
+		// model.addAttribute("pi",pi);
 		
 		// viewName 반환
-		return "board/boardListView";
+		// return "board/boardListView";
 	}
 	
 	@GetMapping("/insert/{boardCode}")
