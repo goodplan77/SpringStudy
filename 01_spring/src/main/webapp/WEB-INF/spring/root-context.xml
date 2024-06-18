@@ -67,5 +67,20 @@
 		constructor-arg : 생성자 방식으로 값을 주입
 		ex) new Bean객체(value/ref값)
 	-->
+	
+	 <!-- DB연결 끝 -->
+	 
+	 <!-- 업로드 되는 파일에 대한 설정 -->
+	 <bean id ="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		
+			<!-- 인코딩 처리 -->
+			<property name="defaultEncoding" value="UTF-8"/>
+			<!-- 104857600 byte = 100MB
+				기본값 : 10240 바이트
+				1mb == 1024kb == 1048576 byte
+			-->
+			<property name="maxUploadSize" value="10000000"/>
+			<property name="maxInMemorySize" value="10000000"/>
+	 </bean>
 	 
 </beans>

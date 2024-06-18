@@ -52,6 +52,19 @@
 		<beans:property name="order" value="1"></beans:property>
 	</beans:bean>
 	
+	<!-- ========== 인터셉터 등록 영역 시작 ========== -->
+	<!--
+		Interceptor : DispatcherServlet 에서 컨트롤러에 요청내용을 전달할 때 인터셉터가 중간에 요청을 가로챈다.
+		로그인 체크 , 권한 체크 , 프로그램 실행시간 체크 , 로그확인 등등 다양한 작업에 사용
+	 -->
 	
+	<interceptors>
+		<interceptor>
+			<mapping path="/**"/> <!-- 모든 파일 , 경로 포함 -->
+			<beans:bean class="com.kh.spring.common.interceptor.BoardTypeInterceptor"/>
+		</interceptor>
+	</interceptors>
+	
+	<!-- ========== 인터셉터 등록 영역 끝 ========== -->
 	
 </beans:beans>
