@@ -45,37 +45,33 @@
 		CREATE_DATE
 	FROM BOARD B
 	LEFT JOIN MEMBER M ON BOARD_WRITER = USER_NO
-	WHERE B.STATUS = 'Y'
-	ORDER BY BOARD_NO ASC           
-   </select>
-   
-   <select id="searchList" resultType="board">
-	SELECT
-		BOARD_NO,
-		BOARD_TITLE,
-		USER_NAME AS BOARD_WRITER,
-		COUNT,
-		CREATE_DATE
-	FROM BOARD B
-	LEFT JOIN MEMBER M ON BOARD_WRITER = USER_NO
-	WHERE B.STATUS = 'Y'
-	<choose>
-		<when test="condition eq 'writer'">
-			AND USER_NAME LIKE '%' || #{keyword} || '%'
-		</when>
-		<when test="condition eq 'title'">
-			AND BOARD_TITLE LIKE '%' || #{keyword} || '%'
-		</when>
-		<when test="condition eq 'content'">
-			AND BOARD_CONTENT LIKE '%' || #{keyword} || '%'
-		</when>
-		<when test="condition eq 'titleAndContent'">
-			AND (BOARD_WRITER = #{keyword} OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')
-		</when>
-		<otherwise>
-		</otherwise>
-	</choose>
-	ORDER BY BOARD_NO ASC           
+	WHERE B.STATUS = 'Y' AND BOARD_CD = #{boardCode}
+	<if test="keyword != null and keyword != ''">
+		AND
+			<choose>
+				<when test="condition == 'title'">
+					BOARD_TITLE LIKE '%' || #{keyword} || '%'
+				</when>
+			</choose>
+			<choose>
+				<when test="condition == 'writer'">
+					USER_NAME LIKE '%' || #{keyword} || '%'
+				</when>
+			</choose>
+			<choose>
+				<when test="condition == 'content'">
+					BOARD_CONTENT LIKE '%' || #{keyword} || '%'
+				</when>
+			</choose>
+			<choose>
+				<when test="condition == 'titleAndContent'">
+					(BOARD_TITLE LIKE '%' || #{keyword} || '%')
+						OR
+					(BOARD_CONTENT LIKE '%' || #{keyword} || '%')
+				</when>
+			</choose>
+	</if>
+		ORDER BY BOARD_NO DESC 
    </select>
    
    <select id="selectListCount" resultType="int">
@@ -83,32 +79,127 @@
    			COUNT(*)
    		FROM BOARD B
    		LEFT JOIN MEMBER M ON BOARD_WRITER = USER_NO
-   		WHERE B.STATUS = 'Y'
+   		WHERE B.STATUS = 'Y' AND BOARD_CD = #{boardCode} 
+   		<if test="keyword != null and keyword != ''">
+		AND
+			<choose>
+				<when test="condition == 'title'">
+					BOARD_TITLE LIKE '%' || #{keyword} || '%'
+				</when>
+			</choose>
+			<choose>
+				<when test="condition == 'writer'">
+					USER_NAME LIKE '%' || #{keyword} || '%'
+				</when>
+			</choose>
+			<choose>
+				<when test="condition == 'content'">
+					BOARD_CONTENT LIKE '%' || #{keyword} || '%'
+				</when>
+			</choose>
+			<choose>
+				<when test="condition == 'titleAndContent'">
+					(BOARD_TITLE LIKE '%' || #{keyword} || '%')
+						OR
+					(BOARD_CONTENT LIKE '%' || #{keyword} || '%')
+				</when>
+			</choose>
+	</if>
    </select>
    
-   <select id="searchListCount" resultType="int">
-	SELECT
-		COUNT(*)
-	FROM BOARD B
-	LEFT JOIN MEMBER M ON BOARD_WRITER = USER_NO
-	WHERE B.STATUS = 'Y'
-	<choose>
-		<when test="condition eq 'writer'">
-			AND USER_NAME LIKE '%' || #{keyword} || '%'
-		</when>
-		<when test="condition eq 'title'">
-			AND BOARD_TITLE LIKE '%' || #{keyword} || '%'
-		</when>
-		<when test="condition eq 'content'">
-			AND BOARD_CONTENT LIKE '%' || #{keyword} || '%'
-		</when>
-		<when test="condition eq 'titleAndContent'">
-			AND (BOARD_WRITER = #{keyword} OR BOARD_CONTENT LIKE '%' || #{keyword} || '%')
-		</when>
-		<otherwise>
-		</otherwise>
-	</choose>
-	ORDER BY BOARD_NO ASC           
+   <insert id="insertBoard" parameterType="board" useGeneratedKeys="true">
+   <selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+   		SELECT SEQ_BNO.NEXTVAL FROM DUAL	
+   </selectKey>
+   		INSERT INTO BOARD
+   		VALUES(
+   			#{boardNo}, 
+   			#{boardTitle},
+   			#{boardContent},
+   			#{boardCd},
+   			#{boardWriter},
+   			DEFAULT,
+   			DEFAULT,
+   			DEFAULT
+   		)
+   </insert>
+   
+   <insert id="insertBoardImg">
+   		INSERT INTO BOARD_IMG
+   		(
+   			BOARD_IMG_NO,
+   			ORIGIN_NAME,
+   			CHANGE_NAME,
+   			REF_BNO,
+   			IMG_LEVEL
+   		) VALUES (
+   			SEQ_IMG_NO.NEXTVAL,
+   			#{originName},
+   			#{changeName},
+   			#{refBno},   			
+   			#{imgLevel}   			
+   		)
+   </insert>
+   
+   <resultMap type="boardExt" id="boardExtMap">
+   		<id column = "BOARD_NO" property="boardNo"/>
+   		<result column="BOARD_TITLE" property="boardTitle"/>
+   		<result column="USER_NAME" property="userName"/>
+   		<result column="CREATE_DATE" property="createDate"/>
+   		<result column="COUNT" property="count"/>
+   		<result column="BOARD_CONTENT" property="boardContent"/>
+   		<result column="BOARD_CD" property="boardCd"/>
+   
+   		<!-- 결과값을 vo클래스로 매핑사용하는 태그 -->
+   		<association property="attachment">
+   			<id column="BOARD_IMG_NO" property="boardImgNo"/>
+   			<result column="ORIGIN_NAME" property="originName"/>
+   			<result column="CHANGE_NAME" property="changeName"/>
+   			<result column="IMG_LEVEL" property="imgLevel"/>
+   		</association>
+   
+   </resultMap>
+   
+   <select id="selectBoard" resultMap='boardExtMap'>
+   		SELECT
+   			BOARD_NO,
+   			BOARD_TITLE,
+   			USER_NAME, 
+   			CREATE_DATE,
+   			COUNT,
+   			BOARD_CONTENT,
+   			BOARD_CD,
+   			
+   			BOARD_IMG_NO,
+   			ORIGIN_NAME,
+   			CHANGE_NAME,
+   			IMG_LEVEL
+   			
+   		FROM BOARD B
+   		LEFT JOIN MEMBER M ON (BOARD_WRITER = USER_NO)
+   		LEFT JOIN BOARD_IMG BI ON (BOARD_NO = REF_BNO)
+   		WHERE B.STATUS = 'Y' AND BOARD_NO = #{boardNo}
    </select>
+   
+   <update id="increaseCount">
+   		UPDATE BOARD SET
+   		COUNT = COUNT + 1
+   		WHERE BOARD_NO = #{bno}
+   </update>
+   
+   <update id="updateBoard" parameterType="board">
+   		UPDATE BOARD
+   		SET BOARD_TITLE = #{boardTitle} , 
+   			BOARD_CONTENT = #{boardContent}
+   		WHERE BOARD_NO = #{boardNo}
+   </update>
+   
+   <update id="updateBoateImg" parameterType="boardImg">
+   		UPDATE BOARD_IMG
+   		SET ORIGIN_NAME = #{originName} , 
+   			CHANGE_NAME = #{changeName}
+   		WHERE BOARD_IMG_NO = #{boardImgNo}
+   </update>
+   
  
 </mapper>

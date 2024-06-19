@@ -68,6 +68,10 @@
 		ex) new Bean객체(value/ref값)
 	-->
 	
+	<bean id='transactionManager' class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="realDataSource"/>
+	</bean>
+	
 	 <!-- DB연결 끝 -->
 	 
 	 <!-- 업로드 되는 파일에 대한 설정 -->

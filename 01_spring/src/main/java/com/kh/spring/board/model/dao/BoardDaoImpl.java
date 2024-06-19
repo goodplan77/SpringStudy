@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.kh.spring.board.model.vo.Board;
+import com.kh.spring.board.model.vo.BoardImg;
 import com.kh.spring.board.model.vo.BoardType;
 import com.kh.spring.common.model.vo.PageInfo;
 
@@ -43,14 +44,14 @@ public class BoardDaoImpl implements BoardDao{
 //	}
 	
 	@Override
-	public List<Board> selectList(PageInfo pi) {
+	public List<Board> selectList(PageInfo pi , Map<String, Object> param) {
 		// MyBatis의 RowBounds 객체를 이용한 페이징 처리
 		
-		int offset = (pi.getCurrentPage() - 1) * pi.getPageLimit();
+		int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
 		int limit = pi.getBoardLimit();
 		RowBounds rowBounds = new RowBounds(offset , limit);
 		
-		return sqlSession.selectList("board.selectList" , null , rowBounds);
+		return sqlSession.selectList("board.selectList" , param , rowBounds);
 	}
 	
 	@Override
@@ -59,22 +60,38 @@ public class BoardDaoImpl implements BoardDao{
 	}
 	
 	@Override
-	public int selectListCount() {
-		return sqlSession.selectOne("board.selectListCount");
+	public int selectListCount(Map<String, Object> param) {
+		return sqlSession.selectOne("board.selectListCount" , param);
 	}
 
 	@Override
-	public List<Board> searchList(PageInfo pi, Map<String, Object> paramMap) {
-		int offset = (pi.getCurrentPage() - 1) * pi.getPageLimit();
-		int limit = pi.getBoardLimit();
-		RowBounds rowBounds = new RowBounds(offset , limit);
-		
-		return sqlSession.selectList("board.searchList" , paramMap , rowBounds);
+	public int insertBoard(Board b) {
+		return sqlSession.insert("board.insertBoard" , b);
 	}
 
 	@Override
-	public int searchListCount(Map<String, Object> paramMap) {
-		return sqlSession.selectOne("board.searchListCount" , paramMap);
+	public int insertBoardImg(BoardImg bi) {
+		return sqlSession.insert("board.insertBoardImg" , bi);
+	}
+
+	@Override
+	public Board selectBoard(int boardNo) {
+		return sqlSession.selectOne("board.selectBoard" , boardNo);
+	}
+
+	@Override
+	public int increaseCount(int boardNo) {
+		return sqlSession.update("board.increaseCount" , boardNo);
+	}
+
+	@Override
+	public int updateBoardImg(BoardImg bi) {
+		return sqlSession.update("board.updateBoardImg" , bi);
+	}
+
+	@Override
+	public int updateBoard(Board board) {
+		return sqlSession.update("board.updateBoard" , board);
 	}
 
 	

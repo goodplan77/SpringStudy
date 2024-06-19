@@ -64,10 +64,14 @@
 	<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 	<div class="content">
-		<br>
-		<br>
+		<br><br>
+		
 		<div class="innerOuter" style="padding: 5% 10%;">
-			<h2>${boardName}</h2>
+		<c:forEach var="boardType" items = "${boardTypeList}">
+			<c:if test="${boardType.boardCode eq boardCode }">
+				<h2>${boardType.boardName}</h2>
+			</c:if>
+		</c:forEach>
 			<br>
 			<br>
 
@@ -118,7 +122,9 @@
 			<br>
 			
 			<c:set var="url" value="${boardCode }?currentPage="/>
-		
+			<c:if test="${not empty param.condition}">
+				<c:set var="sParam" value="&condition=${param.condition }&keyword=${param.keyword}"/>
+			</c:if>
 			<div id ="pagingArea">
 				<ul class = "pagination">
 					<c:if test="${pi.currentPage eq 1}">
@@ -128,13 +134,13 @@
 					</c:if>
 					<c:if test="${pi.currentPage ne 1}">
 						<li class="page-item">
-							<a class="page-link" href="${url}${pi.currentPage -1 }">Previous</a>
+							<a class="page-link" href="${url}${pi.currentPage -1 }${sParam}">Previous</a>
 						</li>
 					</c:if> 
 					
 					<c:forEach var="i" begin="${pi.startPage }" end="${pi.endPage}">
 						<li class="page-item">
-							<a class="page-link ${i eq pi.currentPage ? 'on' : ''}" href="${url}${i}">${i}</a>
+							<a class="page-link ${i eq pi.currentPage ? 'on' : ''}" href="${url}${i}${sParam}">${i}</a>
 						</li>
 					</c:forEach>
 					
@@ -145,7 +151,7 @@
 					</c:if>
 					<c:if test="${pi.currentPage ne pi.maxPage}">
 						<li class="page-item">
-							<a class="page-link" href="${url}${pi.currentPage +1 }">Next</a>
+							<a class="page-link" href="${url}${pi.currentPage +1 }${sParam}">Next</a>
 						</li>
 					</c:if>
 				</ul>

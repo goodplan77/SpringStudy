@@ -32,4 +32,27 @@ public class Utils {
 		
 		return changeName;
 	}
+	
+	// XSS 크로스 사이트 스크립트 공격을 방지하기위한 메소드
+	public static String XSSHandling(String content) {
+		if(content != null) {
+			content = content.replaceAll("&","&amp;");
+			content = content.replaceAll("<","&lt;");
+			content = content.replaceAll(">","&gt;");
+			content = content.replaceAll("\"","&quot;");
+		}
+		
+		return content;
+	}
+	
+	// 개행 처리
+	// textArea -> \n , p -> <br>
+	public static String newLineHandling(String content) {
+		return content.replaceAll("(\r\n|\n|\r|\n\r)", "<br>");
+	}
+	
+	// 개행처리 해제
+	public static String newLineClear(String content) {
+		return content.replaceAll("(<br>)", "\n");
+	}
 }
