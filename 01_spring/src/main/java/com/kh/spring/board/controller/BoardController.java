@@ -112,14 +112,14 @@ public class BoardController {
 			Model model , //errorMsg
 			RedirectAttributes ra , // 1회성 메세지 저장용 alertMsg
 			// 첨부 파일
-			@RequestParam(value="upfile" , required=false) MultipartFile upfile
+			@RequestParam(value="upfile" , required=false) MultipartFile upfile // 항상 객체 생성
 			// upfile에 넘어온 데이터의 경우 , 필수 속성이 아님을 지정
 			// 기본값이 true 이므로 반드시 값이 들어가게됨
 			) {
 		// 업무 로직
 		// 1) 웹서버에 클라이언트가 전달한 FILE 저장
 		BoardImg bi = null;
-		if(upfile != null && !upfile.getOriginalFilename().equals("")) {
+		if(upfile != null && !upfile.isEmpty()) {
 			// 첨부파일 , 이미지들을 저장할 저장경로 얻어오기.
 			String webPath = "/resources/images/board/"+boardCode+"/";
 			String serverFolderPath = application.getRealPath(webPath);
@@ -136,7 +136,7 @@ public class BoardController {
 			bi = new BoardImg();
 			bi.setChangeName(changeName);
 			bi.setOriginName(upfile.getOriginalFilename());
-			bi.setImgLevel(0); //0은
+			bi.setImgLevel(0); // 0은 첨부파일 , 1 : 썸네일 , 그외는 상세보기 이미지
 		}
 		
 		// 2) 저장 완료시 파일이 저장된 경로를 BOARD_IMG에 등록후 테이블에 추가
@@ -293,7 +293,8 @@ public class BoardController {
 			RedirectAttributes ra,
 			// 첨부 파일
 			@RequestParam(value="upfile" , required=false) MultipartFile upfile,
-			int boardImgNo
+			int boardImgNo,
+			String deleteList // 일반게시판 1 , 사진 게시판 1,2,3
 			) {
 		// 업무 로직
 		// BOARD테이블 수정하고
@@ -301,7 +302,7 @@ public class BoardController {
 		
 		int result = 0;
 		
-		result = boardService.updateBoard(board , upfile , boardImgNo);
+		result = boardService.updateBoard(board , upfile , boardImgNo , deleteList);
 		
 		if(result > 0) {
 			ra.addFlashAttribute("alertMsg","게시글 수정 성공");

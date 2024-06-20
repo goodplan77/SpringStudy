@@ -36,7 +36,8 @@
                   <tr>
                      <th>첨부파일</th>
                      <td><input type="file" id="upfile" class="form-control" name="upfile">
-                        ${board.attachment.originName }
+                        <span id="originName">${board.attachment.originName }</span>
+                        <span class="delete-image" data-no="${board.attachment.boardImgNo }">&times;</span>
                         <input type="hidden" name="boardImgNo" value="${empty board.attachment.boardImgNo ? '0' : board.attachment.boardImgNo }"/>
                         
                      </td>
@@ -54,11 +55,31 @@
             <div align="center">
                <button type="submit" class="btn btn-primary">수정</button>
                <button type="reset" class="btn btn-danger">취소</button>
-            </div>      
+            </div>
+            <input type="hidden" name="deleteList" id="deleteList" value=""/>    
           </form>
       </div>
    </div>   
    
+   <script>
+   		$(function(){
+   			var $deleteImage = $(".delete-image");
+   			var $deleteList = $("#deleteList");
+   			
+   			$deleteImage.each(function(index , ele) {
+   				$(ele).click(function(e){
+   					var boardImgNo = $(this).data("no"); // data-no
+   					var originName = $("#originName"); // span
+   					
+   					// 첨부 파일 번호
+   					$deleteList.val(boardImgNo);
+   					// 파일 번호를 받아오고 이름 , x 버튼 삭제
+   					originName.remove();
+   					$(this).remove();
+   				});
+   			});
+   		})
+   </script>
    
    <jsp:include page="/WEB-INF/views/common/footer.jsp" />
 

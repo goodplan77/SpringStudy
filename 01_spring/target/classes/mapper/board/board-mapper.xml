@@ -194,12 +194,16 @@
    		WHERE BOARD_NO = #{boardNo}
    </update>
    
-   <update id="updateBoateImg" parameterType="boardImg">
+   <update id="updateBoardImg" parameterType="boardImg">
    		UPDATE BOARD_IMG
    		SET ORIGIN_NAME = #{originName} , 
    			CHANGE_NAME = #{changeName}
    		WHERE BOARD_IMG_NO = #{boardImgNo}
    </update>
    
+   <delete id="deleteBoardImg">
+   		DELETE FROM BOARD_IMG
+   		WHERE BOARD_IMG_NO IN (#{deleteList})
+   </delete>
  
 </mapper>

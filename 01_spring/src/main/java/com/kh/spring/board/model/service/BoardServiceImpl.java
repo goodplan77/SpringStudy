@@ -16,7 +16,9 @@ import com.kh.spring.common.Utils;
 import com.kh.spring.common.model.vo.PageInfo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService{
@@ -82,7 +84,7 @@ public class BoardServiceImpl implements BoardService{
 
 	@Override
 	@Transactional(rollbackFor = {Exception.class})
-	public int updateBoard(Board board, MultipartFile upfile, int boardImgNo) {
+	public int updateBoard(Board board, MultipartFile upfile, int boardImgNo , String deleteList) {
 		// IMG가 있으면 이미지 테이블 수정
 		// 사진이 없던 곳에서 새롭게 추가된 경우	-> INSERT
 		// 사진이 있던 곳에서 새롭게 추가된 경우	-> UPDATE
@@ -101,14 +103,19 @@ public class BoardServiceImpl implements BoardService{
 		}
 		
 		BoardImg bi = new BoardImg();
+		String webPath = "/resources/images/board/N/";
+		String serverFolderPath = application.getRealPath(webPath);
+		
+		log.debug("board {} " , board);
+		log.debug("upfile {} " , upfile);
+		log.debug("boardImgNo {} " , boardImgNo);
+		log.debug("deleteList {} " , deleteList);
+		
 		// 사진이 없던 곳에서 새롭게 추가된 경우	-> INSERT
-		if(boardImgNo == 0 && upfile != null && !(upfile.getOriginalFilename().equals(""))) {
+		if(boardImgNo == 0 && upfile != null && !upfile.isEmpty()) {
 			bi.setRefBno(board.getBoardNo());
 			bi.setImgLevel(0);
-			
-			String webPath = "/resources/images/board/N/";
-			String serverFolderPath = application.getRealPath(webPath);
-			
+					
 			String changeName = Utils.saveFile(upfile , serverFolderPath);
 			bi.setChangeName(changeName);
 			bi.setOriginName(upfile.getOriginalFilename());
@@ -116,11 +123,8 @@ public class BoardServiceImpl implements BoardService{
 			result *= boardDao.insertBoardImg(bi);
 		} 
 		// 사진이 있던 곳에서 새롭게 추가된 경우	-> UPDATE
-		else if (boardImgNo != 0 && upfile != null && !(upfile.getOriginalFilename().equals(""))) {
+		else if (boardImgNo != 0 && upfile != null && !upfile.isEmpty()) {
 			bi.setBoardImgNo(boardImgNo);
-			
-			String webPath = "/resources/images/board/N/";
-			String serverFolderPath = application.getRealPath(webPath);
 			
 			String changeName = Utils.saveFile(upfile , serverFolderPath);
 			bi.setChangeName(changeName);
@@ -129,8 +133,10 @@ public class BoardServiceImpl implements BoardService{
 			result *= boardDao.updateBoardImg(bi);
 		} 
 		// 사진이 있던 곳에서 삭제가 된 경우		-> DELETE
-		else if (boardImgNo != 0 && upfile != null && !(upfile.getOriginalFilename().equals(""))) {
-			//
+		// 새롭게 등록된 파일이 없고 upfile.isEmpty() + 삭제할 목록이 존재하는 경우 !(deleteList.equals(""))
+		else if (boardImgNo != 0 && upfile.isEmpty() && !(deleteList.equals(""))) {
+			result *=boardDao.deleteBoardImg(deleteList);
+			// 웹서버의 파일 시스템안에 있는 첨부파일도 삭제 해줘야함.
 		}
 		
 		return result;

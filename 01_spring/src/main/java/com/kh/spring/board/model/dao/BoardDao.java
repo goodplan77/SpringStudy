@@ -28,4 +28,6 @@ public interface BoardDao {
 
 	int updateBoard(Board board);
 
+	int deleteBoardImg(String deleteList);
+
 }
