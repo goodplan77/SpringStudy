@@ -155,7 +155,7 @@ div {
 		<script>
 			alertify.alert("서비스 요청 성공", '${alertMsg}');
 		</script>
-		<%-- <c:remove var="alertMsg" /> 컨트롤러에서 이미 설정--%>
+		<c:remove var="alertMsg" />
 	</c:if>
 	<div id="header">
 		<div id="header_1">

@@ -98,17 +98,112 @@ img {
 						</th>
 					</tr>
 					<tr>
-						<td colspan="3">댓글(<span id="rcount">0</span>)
+						<td colspan="3">댓글(<span id="rcount">${empty board.replyList ? '0' : board.replyList.size() }</span>)
 						</td>
 					</tr>
 				</thead>
 				<tbody>
-
-
+					<c:forEach items="${board.replyList}" var="reply">
+						<tr>
+							<td>${reply.userName}</td>
+							<td>${reply.replyContent}</td>
+							<td>${reply.createDate}
+								<button onclick="showReplyUpdateForm(${reply.replyNo} , this)">수정</button>
+								<button onclick="showReplyUpdateForm(${reply.replyNo} , this)">삭제</button>
+							</td>
+						</tr>
+					</c:forEach>
 				</tbody>
 			</table>
 		</div>
 	</div>
+	
+	<script>
+		// 댓글 목록 조회
+		function selectReplyList(){
+			$.ajax({
+				url : '${contextPath}/reply/selectReplyList',
+				data : {
+					boardNo : '${boardNo}'
+				} ,
+				success : function(result){
+					console.log(result);
+					
+					var replys = "";
+					for (var reply of result){
+						replys += "<tr>";
+							replys += `<td>\${reply.userName}</td>`;
+							replys += `<td>\${reply.replyContent}</td>`;
+							replys += `<td>\${reply.createDate}
+										<button onclick='showReplyUpdateForm(\${reply.replyNo} , this)'>수정</button>
+										<button onclick='showReplyUpdateForm'>삭제</button>
+										</td>`;
+							replys += "</tr>";
+					}
+					
+					$("#replyArea tbody").html(replys);
+					$("#rcount").html(result.length);
+				}
+			})	
+		}
+		
+		function showReplyUpdateForm(replyNo , btn){
+			var $textArea = $("<textarea></textarea>");
+			var $button = $("<button></button>").text("수정");
+			
+			var $td = $(btn).parent().parent().children().eq(1);
+			// 댓글내용 복사
+			$textArea.text($td.text());
+			
+			$td.html(""); // 기존 댓글 내용 제거
+			$td.append($textArea).append($button);
+			
+			$button.click(function(){
+				updateReply(replyNo , $textArea);
+			})
+		}
+		
+		function updateReply(replyNo , $textArea){
+			$.ajax({
+				url : '${contextPath}/reply/update',
+				data : {
+					replyNo,
+					replyContent : $textArea.val() /* jQuery */
+				} , 
+				type : 'POST',
+				success : function(result){
+					if(result > 0){
+						alert('댓글수정성공');
+					}else {
+						alert('댓글수정실패');
+					}
+					selectReplyList();
+				}
+			})
+		}
+		
+		function insertReply(){
+			
+			$.ajax({
+				url : '${contextPath}/reply/insertReply',
+				type : 'POST',
+				data : {
+					refBno : '${boardNo}',
+					replyWriter : '${loginUser.userNo}',
+					replyContent : $("#replyContent").val()
+				} , 
+				success : function(result){
+					if(result == 0) alert('댓글등록실패');
+					else alert('댓글등록성공');
+					selectReplyList();
+					$("#replyContent").val("");
+				}
+			})
+		}
+		
+		// selectReplyList();
+	
+		</script>
 
 
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"></jsp:include>

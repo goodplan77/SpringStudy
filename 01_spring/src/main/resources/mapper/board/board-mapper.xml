@@ -141,6 +141,91 @@
    		)
    </insert>
    
+   <select id="selectReplyList" resultType="reply">
+   		SELECT
+			REPLY_NO,
+			REPLY_CONTENT,
+			REF_BNO,
+			USER_NAME,
+			REPLY_WRITER,
+			CREATE_DATE,
+			REPLY.STATUS
+		FROM REPLY
+		JOIN MEMBER ON REPLY_WRITER = USER_NO
+		WHERE REF_BNO = #{boardNo}
+			AND REPLY.STATUS = 'Y'
+   </select>
+    
+   <select id="selectBoard2" resultMap='boardExtMap2'>
+   		SELECT
+		    BOARD_NO, 
+		    BOARD_TITLE,
+		    M.USER_NAME , 
+		    B.CREATE_DATE,
+		    COUNT,
+		    BOARD_CONTENT,
+		    BOARD_CD,
+		    
+		    BOARD_IMG_NO,
+		    ORIGIN_NAME,
+		    CHANGE_NAME,
+		    IMG_LEVEL
+		FROM BOARD B
+		LEFT JOIN MEMBER M ON (BOARD_WRITER = M.USER_NO)
+		LEFT JOIN BOARD_IMG BI ON (BOARD_NO = BI.REF_BNO)
+		WHERE B.STATUS = 'Y' AND BOARD_NO = #{boardNo}
+   </select>
+   
+   <resultMap type="boardExt" id="boardExtMap2">
+   		<id column = "BOARD_NO" property="boardNo"/>
+   		<result column="BOARD_TITLE" property="boardTitle"/>
+   		<result column="USER_NAME" property="userName"/>
+   		<result column="CREATE_DATE" property="createDate"/>
+   		<result column="COUNT" property="count"/>
+   		<result column="BOARD_CONTENT" property="boardContent"/>
+   		<result column="BOARD_CD" property="boardCd"/>
+   
+   		<association property="attachment">
+   			<id column="BOARD_IMG_NO" property="boardImgNo"/>
+   			<result column="ORIGIN_NAME" property="originName"/>
+   			<result column="CHANGE_NAME" property="changeName"/>
+   			<result column="IMG_LEVEL" property="imgLevel"/>
+   		</association>
+   		
+   		<collection property="replyList" javaType="java.util.List" ofType="reply" 
+   		select="selectReplyList" column="BOARD_NO"></collection>
+   
+   </resultMap>
+   
+   <select id="selectBoard" resultMap='boardExtMap'>
+   		SELECT
+		    BOARD_NO, 
+		    BOARD_TITLE,
+		    M.USER_NAME , 
+		    B.CREATE_DATE,
+		    COUNT,
+		    BOARD_CONTENT,
+		    BOARD_CD,
+		    
+		    BOARD_IMG_NO,
+		    ORIGIN_NAME,
+		    CHANGE_NAME,
+		    IMG_LEVEL,
+		    
+		    REPLY_NO,
+		    REPLY_CONTENT,
+		    R.CREATE_DATE AS REPLY_CREATE_DATE,
+		    R.REF_BNO,
+		    REPLY_WRITER,
+		    M2.USER_NAME AS REPLY_USER_NAME
+		FROM BOARD B
+		LEFT JOIN MEMBER M ON (BOARD_WRITER = M.USER_NO)
+		LEFT JOIN BOARD_IMG BI ON (BOARD_NO = BI.REF_BNO)
+		LEFT JOIN REPLY R ON R.REF_BNO = BOARD_NO
+		LEFT JOIN MEMBER M2 ON REPLY_WRITER = M2.USER_NO
+		WHERE B.STATUS = 'Y' AND BOARD_NO = #{boardNo}
+   </select>
+   
    <resultMap type="boardExt" id="boardExtMap">
    		<id column = "BOARD_NO" property="boardNo"/>
    		<result column="BOARD_TITLE" property="boardTitle"/>
@@ -157,29 +242,25 @@
    			<result column="CHANGE_NAME" property="changeName"/>
    			<result column="IMG_LEVEL" property="imgLevel"/>
    		</association>
+   		
+   		<!--
+   			collection
+   				property	= 매핑 시킬 필드명
+   				javaType	= 반환 시킬 자료형
+   				ofType		= 제네릭 타입
+   		-->
+   		
+   		<!-- pk -> id값으로 설정 , 동일값을 하나의 그룹으로 묶기 -->
+   		<collection property="replyList" javaType="java.util.List" ofType="reply">
+   			<id column="REPLY_NO" property="replyNo"/>
+   			<result column="REPLY_CONTENT" property="replyContent"/>
+   			<result column="REPLY_CREATE_DATE" property="createDate"/>
+   			<result column="REF_BNO" property="refBno"/>
+   			<result column="REPLY_WRITER" property="replyWriter"/>
+   			<result column="REPLY_USER_NAME" property="userName"/>
+   		</collection>
    
    </resultMap>
-   
-   <select id="selectBoard" resultMap='boardExtMap'>
-   		SELECT
-   			BOARD_NO,
-   			BOARD_TITLE,
-   			USER_NAME, 
-   			CREATE_DATE,
-   			COUNT,
-   			BOARD_CONTENT,
-   			BOARD_CD,
-   			
-   			BOARD_IMG_NO,
-   			ORIGIN_NAME,
-   			CHANGE_NAME,
-   			IMG_LEVEL
-   			
-   		FROM BOARD B
-   		LEFT JOIN MEMBER M ON (BOARD_WRITER = USER_NO)
-   		LEFT JOIN BOARD_IMG BI ON (BOARD_NO = REF_BNO)
-   		WHERE B.STATUS = 'Y' AND BOARD_NO = #{boardNo}
-   </select>
    
    <update id="increaseCount">
    		UPDATE BOARD SET

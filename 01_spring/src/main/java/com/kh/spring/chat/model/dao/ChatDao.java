@@ -26,7 +26,13 @@ public class ChatDao {
 	}
 
 	public int joinChatRoom(ChatRoomJoin join) {
-		return sqlSession.insert("chat.joinChatRoom" , join);
+		int result = 1;
+		try {
+			return sqlSession.insert("chat.joinChatRoom" , join);
+		} catch (Exception e) {
+			
+		}
+		return result;
 	}
 
 	public List<ChatMessage> selectChatMessage(int chatRoomNo) {
@@ -35,6 +41,18 @@ public class ChatDao {
 
 	public int insertMessage(ChatMessage chatMessage) {
 		return sqlSession.insert("chat.insertMessage" , chatMessage);
+	}
+
+	public int exitChatRoom(ChatRoomJoin join) {
+		return sqlSession.delete("chat.exitChatRoom" , join);
+	}
+
+	public int countChatRoomMember(int chatRoomNo) {
+		return sqlSession.selectOne("chat.countChatRoomMember" , chatRoomNo);
+	}
+
+	public int closeChatRoom(int chatRoomNo) {
+		return sqlSession.update("chat.closeChatRoom" , chatRoomNo);
 	}
 
 }

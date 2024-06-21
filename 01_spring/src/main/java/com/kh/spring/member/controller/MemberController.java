@@ -131,7 +131,8 @@ public class MemberController {
 	public String login(
 			Member m ,
 			Model model, // 응답 데이터 담아줄 객체 (로그인한 회원정보 , 로그인 성공/실패 메시지)
-			RedirectAttributes ra) {
+			RedirectAttributes ra,
+			HttpSession session) {
 		
 		// 암호화전 로그인 요청처리 작업
 		// 업무 로직
@@ -163,7 +164,11 @@ public class MemberController {
 		} else {
 			ra.addFlashAttribute("alertMsg" , "로그인 성공");
 			model.addAttribute("loginUser" , loginUser); // session scope 로 이관
-			viewName = "redirect:/";
+			
+			String nextUrl = (String) session.getAttribute("nextUrl");
+			
+			viewName = "redirect:" + (nextUrl != null ? nextUrl :"/");
+			session.removeAttribute(nextUrl);
 		}
 		return viewName;
 	}

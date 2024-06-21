@@ -120,8 +120,9 @@
 		const contextPath = '${contextPath}';
 		
 		// 웹소켓 객체 생성 --> 연결요청 보냄
-		var chattingSocket = new SockJS("http://192.168.30.14:8088"+contextPath + "/chat");
+		// var chattingSocket = new SockJS("http://192.168.30.14:8088"+contextPath + "/chat");
 		// http://192.168.30.14:8088 -> 주소 확인하고 별도로 설정
+		var chattingSocket = new SockJS(contextPath + "/chat");
 		
 	</script>
 	
