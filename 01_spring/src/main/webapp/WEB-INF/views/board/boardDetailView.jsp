@@ -78,7 +78,7 @@ img {
 
 			<div align="center">
 				<!-- 현재 게시글을 작성한 본인인 경우에만 수정하기 버튼이 보여야함. -->
-				<c:if test="${not empty loginUser }">
+				<c:if test="${board.userName eq loginUser.userName }">
 					<a class="btn btn-primary"
 						href="${contextPath }/board/update/${boardCode}/${boardNo}">수정하기</a>
 				</c:if>
