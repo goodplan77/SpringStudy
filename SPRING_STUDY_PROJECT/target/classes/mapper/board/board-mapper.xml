@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+
+	<select id="selectBoardList" resultMap='boardMap'>
+		SELECT *
+		FROM BOARD
+	</select>
+	
+	<select id="selectBoardImgList" resultMap='boardImgMap'>
+		SELECT *
+		FROM BOARD_IMG
+		WHERE REF_NO = #{no}
+	</select>
+	
+	<resultMap type="board" id="boardMap">
+		<id column = "NO" property="no"/>
+   		<result column="TITLE" property="title"/>
+   		<result column="SUB_TITLE" property="subTitle"/>
+   		<result column="CONTENT" property="content"/>
+   		<result column="CREATE_DATE" property="createDate"/>
+	
+	<collection property="imgList" javaType="java.util.List" ofType="boardImg" 
+   		select="selectBoardImgList" column="NO"></collection>
+	</resultMap>
+	
+	<resultMap type="boardImg" id="boardImgMap">
+		<id column = "BOARD_IMG_NO" property="boardImgNo"/>
+   		<result column="UPLOAD_PATH" property="uploadPath"/>
+   		<result column="ORIGIN_NAME" property="originName"/>
+   		<result column="CHANGE_NAME" property="changeName"/>
+   		<result column="REF_NO" property="refNo"/>
+   	</resultMap>
+	
+	<insert id="insertBoard" parameterType="board" useGeneratedKeys="true">
+   <selectKey keyProperty="no" resultType="int" order="BEFORE">
+   		SELECT SEQ_BOARD_NO.NEXTVAL FROM DUAL	
+   </selectKey>
+   		INSERT INTO BOARD
+   		(
+   			NO,
+   			TITLE,
+   			SUB_TITLE,
+   			CONTENT,
+   			CREATE_DATE
+   		)
+   		VALUES(
+   			#{no}, 
+   			#{title},
+   			#{subTitle},
+   			#{content},
+   			DEFAULT
+   		)
+   </insert>
+   
+   <select id="selectBoard" parameterType="int" resultMap='boardMap'>
+		SELECT
+			NO , 
+			TITLE , 
+			SUB_TITLE,
+			CONTENT , 
+			CREATE_DATE
+		FROM BOARD
+		WHERE NO = #{no}
+	</select>
+	
+	<insert id="insertBoardImg" parameterType="boardImg" useGeneratedKeys="true">
+   <selectKey keyProperty="boardImgNo" resultType="int" order="BEFORE">
+   		SELECT SEQ_BOARD_IMG_NO.NEXTVAL FROM DUAL	
+   </selectKey>
+   		INSERT INTO BOARD_IMG
+   		(
+   			BOARD_IMG_NO,
+   			UPLOAD_PATH,
+   			ORIGIN_NAME,
+   			CHANGE_NAME,
+   			REF_NO
+   		)
+   		VALUES(
+   			#{boardImgNo}, 
+   			#{uploadPath},
+   			#{originName},
+   			#{changeName},
+   			#{refNo}
+   		)
+   </insert>
+
+</mapper>
