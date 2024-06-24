@@ -6,18 +6,20 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.kh.study.board.model.dao.BoardDao;
 import com.kh.study.board.model.vo.Board;
 
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class BoardInterceptor implements HandlerInterceptor{
 	
 	private final BoardDao boardDao;
-	
+
 	private final ServletContext application;
 
 	@Override

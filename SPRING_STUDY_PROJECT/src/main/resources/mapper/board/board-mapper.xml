@@ -51,7 +51,7 @@
    			#{title},
    			#{subTitle},
    			#{content},
-   			DEFAULT
+   			SYSDATE
    		)
    </insert>
    
