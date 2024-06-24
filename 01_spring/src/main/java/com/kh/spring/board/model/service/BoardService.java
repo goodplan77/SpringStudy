@@ -23,4 +23,6 @@ public interface BoardService {
 
 	int updateBoard(Board board, MultipartFile upfile, int boardImgNo, String deleteList);
 
+	List<String> selectFileList();
+
 }

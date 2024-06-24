@@ -30,4 +30,6 @@ public interface BoardDao {
 
 	int deleteBoardImg(String deleteList);
 
+	List<String> selectFileList();
+
 }

@@ -286,5 +286,12 @@
    		DELETE FROM BOARD_IMG
    		WHERE BOARD_IMG_NO IN (#{deleteList})
    </delete>
+   
+   <select id="selectFileList" resultType="string">
+   		SELECT
+    		'/resources/images/board/' || BOARD_CD || '/' || CHANGE_NAME
+		FROM BOARD_IMG
+		JOIN BOARD ON BOARD_NO = REF_BNO
+   </select>
  
 </mapper>
